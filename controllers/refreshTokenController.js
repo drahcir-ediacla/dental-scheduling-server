@@ -9,7 +9,8 @@ const handleRefreshToken = async (req, res) => {
     console.log('Refresh Token from cookie:', refreshToken);
 
     if (!refreshToken) {
-        return res.sendStatus(401); // Unauthorized
+        console.warn('No refresh token in cookie — skipping refresh');
+        return res.status(204).end(); // 204 No Content: don't retry
     }
 
     try {
@@ -51,7 +52,7 @@ const handleRefreshToken = async (req, res) => {
                 secure: process.env.NODE_ENV === 'production',
                 // maxAge: 15 * 60 * 1000, // 15 minutes
                 maxAge: 30 * 1000, // 30 seconds
-                // sameSite: 'Strict',
+                // sameSite: 'None',
             });
             res.sendStatus(200);
 
