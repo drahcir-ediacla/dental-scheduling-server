@@ -55,7 +55,7 @@ const scheduleAppointment = async (req, res) => {
   }
 };
 
-const fetchTimeSlots = async (req, res) => {
+const getTimeSlots = async (req, res) => {
   const { dentistId } = req.params;
   const { date } = req.query;
 
@@ -80,8 +80,23 @@ const fetchTimeSlots = async (req, res) => {
   }
 };
 
+
+const getAllDentists = async (req, res) => {
+  try {
+    const dentists = await prisma.dentist.findMany({
+      orderBy: { name: 'asc' } // Optional: sort dentists alphabetically
+    });
+
+    return res.status(200).json(dentists);
+  } catch (error) {
+    console.error('Error fetching dentists:', error);
+    return res.status(500).json({ error: 'Failed to fetch dentists.' });
+  }
+};
+
 module.exports = { 
     generateTimeSlots,
     scheduleAppointment,
-    fetchTimeSlots
+    getTimeSlots,
+    getAllDentists
 } ;

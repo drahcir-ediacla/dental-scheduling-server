@@ -5,6 +5,7 @@ const AppointmentController = require('../controllers/appointmentController');
 
 router.post('/generate-time-slots', AppointmentController.generateTimeSlots);
 router.post('/schedule-appointment', AppointmentController.scheduleAppointment);
-router.get('/dentists/:dentistId/slots', AppointmentController.fetchTimeSlots);
+router.get('/dentists/:dentistId/slots', AppointmentController.getTimeSlots);
+router.get('/dentists', AppointmentController.getAllDentists);
 
 module.exports = router;
