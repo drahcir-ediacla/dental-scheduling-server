@@ -20,17 +20,57 @@ model User {
   email         String         @unique
   password      String         @db.VarChar(255)
   refreshTokens RefreshToken[] @relation("UserRefreshTokens")
+  appointments  Appointment[]
 
   @@index([email]) // Add index for quick lookups
   @@map("user")
 }
 
+model Dentist {
+  id           String        @id @default(uuid())
+  name         String
+  appointments Appointment[]
+  timeSlots    TimeSlot[]
+
+  @@map("dentist")
+}
+
+model Appointment {
+  id         String @id @default(uuid())
+  userId     String @map("user_id")
+  dentistId  String @map("dentist_id")
+  timeSlotId String @unique @map("time_slot_id")
+
+  user      User     @relation(fields: [userId], references: [id])
+  dentist   Dentist  @relation(fields: [dentistId], references: [id])
+  timeSlot  TimeSlot @relation(fields: [timeSlotId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([dentistId])
+  @@map("appointment")
+}
+
+model TimeSlot {
+  id       String  @id @default(uuid())
+  date     String // yyyy-mm-dd
+  time     String // hh:mm AM/PM
+  isBooked Boolean @default(false) @map("is_booked")
+
+  dentistId   String       @map("dentist_id")
+  dentist     Dentist      @relation(fields: [dentistId], references: [id])
+  appointment Appointment? // one-to-one relationship
+
+  @@index([dentistId])
+  @@map("time_slot")
+}
+
 model RefreshToken {
   id             String   @id @default(cuid())
-  user           User     @relation("UserRefreshTokens", fields: [userId], references: [id], onDelete: Cascade)
-  userId         String   @unique @map("user_id")
+  userId         String   @map("user_id")
   token          String   @unique @db.VarChar(255)
   expirationDate DateTime @map("expiration_date")
+  user           User     @relation("UserRefreshTokens", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId]) // Index for faster token retrieval
   @@map("refresh_token")

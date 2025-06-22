@@ -7,6 +7,7 @@ const verifyToken = require('./middleware/verifyToken')
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const refreshRoutes = require('./routes/refreshRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -20,11 +21,13 @@ app.use('/api', [
 ]);
 
 
+
 // JWT Middleware - protect all routes after this point
 app.use(verifyToken)
 
 //Private Routes
 app.use('/api', userRoutes);
+app.use('/api', appointmentRoutes);
 
 
 

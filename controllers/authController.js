@@ -74,7 +74,7 @@ const loginUser = async (req, res) => {
 
     try {
       // Check if a refresh token already exists for the user
-      const existingToken = await prisma.refreshToken.findUnique({
+      const existingToken = await prisma.refreshToken.findFirst({
         where: { userId: user.id },
       });
 
