@@ -55,7 +55,33 @@ const scheduleAppointment = async (req, res) => {
   }
 };
 
+const fetchTimeSlots = async (req, res) => {
+  const { dentistId } = req.params;
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({ error: 'Date query parameter is required.' });
+  }
+
+  try {
+    const availableSlots = await prisma.timeSlot.findMany({
+      where: {
+        dentistId,
+        date: date,
+        isBooked: false
+      },
+      orderBy: { time: 'asc' } // Optional: sort time slots
+    });
+
+    return res.status(200).json(availableSlots);
+  } catch (error) {
+    console.error('Error fetching slots:', error);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
 module.exports = { 
     generateTimeSlots,
-    scheduleAppointment
+    scheduleAppointment,
+    fetchTimeSlots
 } ;
