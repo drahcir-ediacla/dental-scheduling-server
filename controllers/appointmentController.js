@@ -94,9 +94,103 @@ const getAllDentists = async (req, res) => {
   }
 };
 
-module.exports = { 
-    generateTimeSlots,
-    scheduleAppointment,
-    getTimeSlots,
-    getAllDentists
-} ;
+
+const getUserAppointment = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const appointments = await prisma.appointment.findMany({
+      where: { userId },
+      include: {
+        dentist: true,
+        timeSlot: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    return res.status(500).json({ error: 'Failed to fetch appointments.' });
+  }
+};
+
+
+const cancelAppointment = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // 1. Find the appointment
+    const appointment = await prisma.appointment.findUnique({
+      where: { id }
+    });
+
+    if (!appointment) return res.status(404).json({ error: 'Appointment not found.' });
+
+    // 2. Free up the time slot
+    await prisma.timeSlot.update({
+      where: { id: appointment.timeSlotId },
+      data: { isBooked: false }
+    });
+
+    // 3. Delete the appointment
+    await prisma.appointment.delete({ where: { id } });
+
+    return res.status(200).json({ message: 'Appointment cancelled successfully.' });
+  } catch (error) {
+    console.error('Error cancelling appointment:', error);
+    return res.status(500).json({ error: 'Failed to cancel appointment.' });
+  }
+};
+
+
+const updateAppointment = async (req, res) => {
+  const { id } = req.params;
+  const { newTimeSlotId } = req.body;
+
+  if (!newTimeSlotId) return res.status(400).json({ error: 'New time slot ID is required.' });
+
+  try {
+    // 1. Find the appointment
+    const appointment = await prisma.appointment.findUnique({ where: { id } });
+    if (!appointment) return res.status(404).json({ error: 'Appointment not found.' });
+
+    // 2. Check if new time slot is available
+    const newSlot = await prisma.timeSlot.findUnique({ where: { id: newTimeSlotId } });
+    if (!newSlot || newSlot.isBooked) return res.status(400).json({ error: 'Selected time slot is not available.' });
+
+    // 3. Free old slot
+    await prisma.timeSlot.update({
+      where: { id: appointment.timeSlotId },
+      data: { isBooked: false }
+    });
+
+    // 4. Book new slot
+    await prisma.timeSlot.update({
+      where: { id: newTimeSlotId },
+      data: { isBooked: true }
+    });
+
+    // 5. Update appointment
+    const updatedAppointment = await prisma.appointment.update({
+      where: { id },
+      data: { timeSlotId: newTimeSlotId }
+    });
+
+    return res.status(200).json({ message: 'Appointment updated successfully.', updatedAppointment });
+  } catch (error) {
+    console.error('Error updating appointment:', error);
+    return res.status(500).json({ error: 'Failed to update appointment.' });
+  }
+};
+
+
+module.exports = {
+  generateTimeSlots,
+  scheduleAppointment,
+  getTimeSlots,
+  getAllDentists,
+  getUserAppointment,
+  cancelAppointment,
+  updateAppointment
+};
