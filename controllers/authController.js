@@ -103,7 +103,7 @@ const loginUser = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         // sameSite: 'None',
-        maxAge: 30 * 1000, // 30 seconds
+        maxAge: 15 * 60 * 1000, // 15 minutes
         path: '/',
       });
 
