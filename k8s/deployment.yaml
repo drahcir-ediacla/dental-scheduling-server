@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dental-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dental
+  template:
+    metadata:
+      labels:
+        app: dental
+    spec:
+      containers:
+      - name: dental-container
+        image: 213305225628.dkr.ecr.ap-southeast-1.amazonaws.com/dental-booking-node-app:latest
+        ports:
+          - containerPort: 3000
+        imagePullPolicy: Always
+

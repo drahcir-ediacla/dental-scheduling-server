@@ -50,9 +50,8 @@ const handleRefreshToken = async (req, res) => {
             res.cookie('accessJwt', newAccessToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                // maxAge: 15 * 60 * 1000, // 15 minutes
-                maxAge: 30 * 1000, // 30 seconds
-                // sameSite: 'None',
+                maxAge: 15 * 60 * 1000, // 15 minutes
+                sameSite: 'None',
             });
             res.sendStatus(200);
 
