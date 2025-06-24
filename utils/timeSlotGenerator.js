@@ -1,8 +1,12 @@
 const prisma = require('../prisma/client');
 
-const timeSlotGenerator = async (daysAhead = 10) => {
+const timeSlotGenerator = async (daysAhead = 30) => {
   const dentists = await prisma.dentist.findMany();
 
+  if (!dentists.length) {
+    console.warn('No dentists found. Aborting time slot generation.');
+    return;
+  }
 
   const timeSlots = [
     '09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'
@@ -43,6 +47,6 @@ const timeSlotGenerator = async (daysAhead = 10) => {
   console.log('Slots generated successfully.');
 };
 
-module.exports = { 
-    timeSlotGenerator
+module.exports = {
+  timeSlotGenerator
 };
