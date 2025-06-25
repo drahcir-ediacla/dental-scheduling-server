@@ -20,17 +20,16 @@ This is the **backend** repository for the Dental Scheduling App. It powers user
 
 ```
 server/
-├── prisma/             # Prisma schema and migrations
-├── src/
-│   ├── controllers/    # Route handlers
+│   ├── config/         # CORS options and app configuration
+│   ├── controllers/    # API or Business logic
+│   ├── k8s/            # Kubernetes manifests for deployment (e.g., Deployment, Service, Ingress)
+│   ├── middleware/     # Verify auth middleware
+│   ├── prisma/         # Prisma client instance, schema and migrations
 │   ├── routes/         # Express route definitions
-│   ├── middleware/     # Auth and error middleware
-│   ├── services/       # Business logic
-│   ├── utils/          # Helper functions (JWT, hashing, etc.)
-│   └── index.ts        # App entry point
+│   ├── utils/          # Time slot generator
+│   └── index.js        # App entry point
 ├── .env                # Environment variables
-├── package.json
-└── tsconfig.json
+└── package.json
 ```
 
 ---
@@ -82,24 +81,28 @@ npm run dev
 
 ### Auth
 
-* `POST /api/auth/register`
-* `POST /api/auth/login`
+* `POST /api/users/register`
+* `POST /api/users/login`
+* `GET /api/user/logout`
 
-### Dentists
+### Refresh Token
 
-* `GET /api/dentists`
-* `GET /api/dentists/:id/available-slots`
+* `GET /api/refresh`
 
 ### Appointments
 
-* `POST /api/appointments`
-* `GET /api/users/:userId/appointments`
-* `PUT /api/appointments/:appointmentId`
-* `DELETE /api/appointments/:appointmentId`
-
-### Utilities
-
 * `POST /api/generate-time-slots` – Manually trigger time slot generation
+* `POST /api/schedule-appointment`
+* `GET /dentists/:dentistId/slots`
+* `GET /api/dentists`
+* `GET /api/users/:userId/appointments`
+* `DELETE /api/users/appointments/:id`
+* `PUT /api/users/appointments/:id`
+
+### User
+
+* `GET /api/get/user/auth`
+* `GET /api/get/users`
 
 ---
 

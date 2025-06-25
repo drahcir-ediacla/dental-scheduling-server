@@ -1,6 +1,6 @@
 const prisma = require('../prisma/client');
 
-const timeSlotGenerator = async (daysAhead = 30) => {
+const timeSlotGenerator = async (daysAhead = 15) => {
   const dentists = await prisma.dentist.findMany();
 
   if (!dentists.length) {
