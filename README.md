@@ -9,7 +9,6 @@ This is the **backend** repository for the Dental Scheduling App. It powers user
 ## 📦 Tech Stack
 
 * **Node.js + Express** – Backend server framework
-* **TypeScript** – For robust, typed development
 * **Prisma ORM** – Database access layer
 * **MySQL** – Relational database
 * **JWT** – Authentication with access and refresh tokens
