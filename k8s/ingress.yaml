@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: api.tbogs.store
+    - host: nodejs-backend.tbogs.store
       http:
         paths:
           - path: /
